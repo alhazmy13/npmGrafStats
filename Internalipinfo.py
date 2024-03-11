@@ -13,6 +13,7 @@ IP = str(sys.argv[1])
 Domain = str(sys.argv[2])
 duration = int(sys.argv[3])
 Target = str(sys.argv[4])
+AllowedIP =  False if str(sys.argv[7]) == 'no' else True
 
 # print to log
 print ('Calling IP: ', IP)
@@ -84,6 +85,7 @@ point.field("IP", IP)
 point.field("Target", Target)
 point.field("duration", duration)
 point.field("metric", 1)
+point.field("AllowedIP", AllowedIP)
 
 point.time(time)
 

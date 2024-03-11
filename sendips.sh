@@ -24,7 +24,7 @@ fi
 
 # gets all lines including an IP. 
 # Grep finds the the IP addresses in the access.log
-tail -F /logs/proxy-host-*_access.log | grep --line-buffered -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | while read line;
+tail -F /logs/proxy-host-*_access*.log | grep --line-buffered -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | while read line;
 
 do
   # Domain or subdomain gets found.
@@ -41,6 +41,9 @@ do
   # save from 14 postion after space and only the first digits found to length 
   length=`echo $line | awk -F ' ' '{print$14}' | grep --line-buffered -m 1 -o '[[:digit:]]*'`
 
+  # Get the geo ip is allowed or not
+  allowedip=`echo $line | grep --line-buffered -m 1 -o -E "(AllowedIP)\s([a-zA-Z]*)" | head -1 | sed s/"AllowedIP "//` 
+
   # get time from logs
   measurementtime=`echo ${line:1:26} `
   #echo "measurement time: $measurementtime"
@@ -53,17 +56,17 @@ do
     echo "Internal IP-Source: $outsideip called: $targetdomain"
     if [ "$INTERNAL_LOGS" = "TRUE" ]
     then
-      python /root/.config/NPMGRAF/Internalipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "InternalRProxyIPs" "$measurementtime"
+      python /root/.config/NPMGRAF/Internalipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "InternalRProxyIPs" "$measurementtime" "$allowedip"
     fi
   elif $monitorfile && grep --line-buffered -qFx $outsideip /monitoringips.txt
   then
     echo "An excluded monitoring service checked: $targetdomain"
     if [ "$MONITORING_LOGS" = "TRUE" ]
     then
-      python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "MonitoringRProxyIPs" "$measurementtime" "$asndb"
+      python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "MonitoringRProxyIPs" "$measurementtime" "$allowedip" "$asndb"
     fi
   else      
-    python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "ReverseProxyConnections" "$measurementtime" "$asndb"
+    python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "ReverseProxyConnections" "$measurementtime" "$allowedip" "$asndb"
   fi
 done
 reboot

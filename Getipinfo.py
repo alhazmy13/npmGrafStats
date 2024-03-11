@@ -32,7 +32,7 @@ if abuseip_key is not None:
     #print(json.dumps(abuseip_response, sort_keys=True, indent=4))
 
 
-asn = str(sys.argv[7])
+asn = str(sys.argv[8])
 
 import geoip2.database
 import socket 
@@ -52,6 +52,7 @@ IP = str(sys.argv[1])
 Domain = str(sys.argv[2])
 duration = int(sys.argv[3])
 Target = str(sys.argv[4])
+AllowedIP = False if str(sys.argv[7]) == 'no' else True
 reader.close()
 
 if asn =='true':
@@ -68,6 +69,7 @@ print (Zip)
 print (Long)
 print (Lat)
 print (ISO)
+print ('Allowed IP: ', AllowedIP)
 if asn =='true':
     print (Asn)
 print ('Outside IP: ', IP)
@@ -162,6 +164,7 @@ point.field("metric", 1)
 if abuseip_key is not None:
     point.field("abuseConfidenceScore", abuseConfidenceScore)
     point.field("totalReports", totalReports)
+point.field("AllowedIP", AllowedIP)
 
 point.time(time)
 
