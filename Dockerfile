@@ -26,6 +26,9 @@ RUN chmod +x  /root/.config/NPMGRAF/sendips.sh
 COPY sendredirectionips.sh /root/.config/NPMGRAF/sendredirectionips.sh
 RUN chmod +x  /root/.config/NPMGRAF/sendredirectionips.sh
 
+COPY sendallowedips.sh /root/.config/NPMGRAF/sendallowedips.sh
+RUN chmod +x  /root/.config/NPMGRAF/sendallowedips.sh
+
 COPY start.sh /root/start.sh
 RUN chmod +x  /root/start.sh
 

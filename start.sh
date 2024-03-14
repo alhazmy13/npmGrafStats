@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "npmGrafStats: v2.4.1"
+echo "npmGrafStats: v2.4.2"
 echo "Startup: lets get the logs send them to influx"
 
 
@@ -13,6 +13,11 @@ elif [ "$REDIRECTION_LOGS" = "ONLY" ]
 then
     echo "Only Redirection Logs activated"
     bash /root/.config/NPMGRAF/sendredirectionips.sh
+
+elif [ "$REDIRECTION_LOGS" = "GEOIP" ]
+then
+    echo "Only Reverse-Proxy with Allowed IP Logs activated"
+    bash /root/.config/NPMGRAF/sendallowedips.sh
 
 else
     echo "Only Reverse-Proxy Logs activated"

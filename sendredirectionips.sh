@@ -24,7 +24,7 @@ fi
 
 # gets all lines including an IP. 
 # Grep finds the the IP addresses in the access.log
-tail -F /logs/redirection-host-*_access*.log | grep --line-buffered -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | while read line;
+tail -F /logs/redirection-host-*_access.log | grep --line-buffered -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | while read line;
 
 do
   # Domain or subdomain gets found.
@@ -38,9 +38,6 @@ do
   measurementtime=`echo ${line:1:26} `
   #echo "measurement time: $measurementtime"
 
-  # Get the geo ip is allowed or not
-  allowedip=`echo $line | grep --line-buffered -m 1 -o -E "(AllowedIP)\s([a-zA-Z]*)" | head -1 | sed s/"AllowedIP "//` 
-
   #Idea of getting device
   #device=`echo $line | grep -e ""'('*')'""`
 
@@ -49,17 +46,17 @@ do
     echo "Internal IP-Source: $outsideip called: $targetdomain"
     if [ "$INTERNAL_LOGS" = "TRUE" ]
     then
-      python /root/.config/NPMGRAF/Internalipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "InternalRProxyIPs" "$measurementtime" "$allowedip"
+      python /root/.config/NPMGRAF/Internalipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "InternalRProxyIPs" "$measurementtime"
     fi
   elif $monitorfile && grep --line-buffered -qFx $outsideip /monitoringips.txt
   then
     echo "An excluded monitoring service checked: $targetdomain"
     if [ "$MONITORING_LOGS" = "TRUE" ]
     then
-      python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "MonitoringRProxyIPs" "$measurementtime" "$allowedip" "$asndb"
+      python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "$length" "$targetip" "MonitoringRProxyIPs" "$measurementtime" "$asndb"
     fi
   else
-    python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "0" "redirect" "Redirections" "$measurementtime" "$allowedip" "$asndb"
+    python /root/.config/NPMGRAF/Getipinfo.py "$outsideip" "$targetdomain" "0" "redirect" "Redirections" "$measurementtime" "$asndb"
   fi
 done
 reboot
